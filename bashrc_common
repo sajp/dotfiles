@@ -1,0 +1,75 @@
+# if in vm source global bashrc
+if test -r "/opt/t87/software/conf/bashrc"; then
+    source "/opt/t87/software/conf/bashrc"
+fi
+
+# Expand the history size
+HISTFILESIZE=100000000
+HISTSIZE=100000
+
+# set edit mode to vi
+set -o vi
+
+# Aliases
+alias up="cd .."
+alias tu='top -o cpu' #cpu
+alias tm='top -o vsize' #memory
+
+# set svn default editor
+export SVN_EDITOR=vim
+export EDITOR=vim
+
+# svndiff command that uses vim to view svn diffs
+svndiff()
+{
+  svn diff "${@}" | view -
+}
+
+# ignore .svn folders in tab complete
+export FIGNORE=.svn
+
+# set colours
+WHITE="\[\033[1;37m\]"
+GREEN="\[\033[0;32m\]"
+CYAN="\[\033[0;36m\]"
+BLACK="\[\033[0;30m\]"
+BLUE="\[\033[1;34m\]"
+PURPLE="\[\033[0;35m\]"
+RED="\[\033[0;31m\]"
+GREY="\[\033[0;37m\]"
+BROWN="\[\033[0;33m\]"
+
+parse_git_branch () {
+    git name-rev HEAD 2> /dev/null | sed 's#HEAD\ \(.*\)# (git::\1)#'
+}
+parse_svn_branch() {
+    parse_svn_url | sed -e 's#^'"$(parse_svn_repository_root)"'##g' | awk '{print " (svn::"$1")" }'
+}
+parse_svn_url() {
+    svn info 2>/dev/null | sed -ne 's#^URL: ##p'
+}
+parse_svn_repository_root() {
+    svn info 2>/dev/null | sed -ne 's#^Repository Root: ##p'
+}
+
+function prompt
+{
+if test -n "$HTGT_ENV"; then
+
+    if test $HTGT_ENV = 'Live'; then
+    export PS1="
+${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w${RED}[$HTGT_ENV]${BROWN}\$(parse_git_branch)\$(parse_svn_branch)${WHITE}
+$ "
+    else
+    export PS1="
+${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w${PURPLE}[$HTGT_ENV]${BROWN}\$(parse_git_branch)\$(parse_svn_branch)${WHITE}
+$ "
+    fi
+
+else
+export PS1="
+${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w${BROWN}\$(parse_git_branch)\$(parse_svn_branch)${WHITE}
+$ "
+fi
+}
+prompt

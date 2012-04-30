@@ -1,0 +1,13 @@
+
+Installation:
+
+    git clone git://github.com/sajp/dotfiles.git ~/dotfiles
+
+Create symlinks, I will script this eventually:
+
+    ln -s ~/dotfiles/bashrc ~/.bashrc
+    ln -s ~/dotfiles/bashrc_htgt ~/.bashrc_htgt
+    ln -s ~/dotfiles/bashrc_common ~/.bashrc_common
+    ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
+    ln -s ~/dotfiles/gitignore ~/.gitignore
+
