@@ -1,6 +1,6 @@
 # if in vm source global bashrc
-if test -r "/opt/t87/software/conf/bashrc"; then
-    source "/opt/t87/software/conf/bashrc"
+if test -r "/opt/t87/global/conf/bashrc"; then
+    source "/opt/t87/global/conf/bashrc"
 fi
 
 # Expand the history size
@@ -27,6 +27,9 @@ svndiff()
 
 # ignore .svn folders in tab complete
 export FIGNORE=.svn
+
+# source bash completion
+source ~/.git-completion.bash
 
 # set colours
 WHITE="\[\033[1;37m\]"
