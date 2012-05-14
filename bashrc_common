@@ -14,6 +14,7 @@ set -o vi
 alias up="cd .."
 alias tu='top -o cpu' #cpu
 alias tm='top -o vsize' #memory
+alias tmux="tmux -2"
 
 # set svn default editor
 export SVN_EDITOR=vim
