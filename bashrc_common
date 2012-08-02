@@ -1,6 +1,7 @@
 # don't put duplicate lines in the history. See bash(1) for more options
 export HISTCONTROL=ignoreboth
 export HISTSIZE=100000
+export HISTFILESIZE=100000000
 
 # append to the history file, don't overwrite it
 shopt -s histappend
@@ -10,8 +11,6 @@ shopt -s histappend
 shopt -s checkwinsize
 
 # Expand the history size
-HISTFILESIZE=100000000
-HISTSIZE=100000
 
 # set edit mode to vi
 set -o vi
