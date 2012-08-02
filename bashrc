@@ -1,7 +1,7 @@
 source "$HOME/.bashrc_common"
 
 function lust () {
-    LUSTRE_DIR=/lustre/scratch103/sanger/sp12
+    LUSTRE_DIR=/lustre/scratch109/sanger/sp12
     if test -d "$LUSTRE_DIR"; then
        cd "$LUSTRE_DIR"
     else
