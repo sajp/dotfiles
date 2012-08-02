@@ -1,7 +1,13 @@
-# if in vm source global bashrc
-if test -r "/opt/t87/global/conf/bashrc"; then
-    source "/opt/t87/global/conf/bashrc"
-fi
+# don't put duplicate lines in the history. See bash(1) for more options
+export HISTCONTROL=ignoreboth
+export HISTSIZE=100000
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
 
 # Expand the history size
 HISTFILESIZE=100000000
@@ -32,48 +38,14 @@ export FIGNORE=.svn
 # source bash completion
 source ~/.git-completion.bash
 
-# set colours
-WHITE="\[\033[1;37m\]"
-GREEN="\[\033[0;32m\]"
-CYAN="\[\033[0;36m\]"
-BLACK="\[\033[0;30m\]"
-BLUE="\[\033[1;34m\]"
-PURPLE="\[\033[0;35m\]"
-RED="\[\033[0;31m\]"
-GREY="\[\033[0;37m\]"
-BROWN="\[\033[0;33m\]"
+# setup prompt
+source "$HOME/.bashrc_prompt"
 
-parse_git_branch () {
-    git name-rev HEAD 2> /dev/null | sed 's#HEAD\ \(.*\)# (git::\1)#'
-}
-parse_svn_branch() {
-    parse_svn_url | sed -e 's#^'"$(parse_svn_repository_root)"'##g' | awk '{print " (svn::"$1")" }'
-}
-parse_svn_url() {
-    svn info 2>/dev/null | sed -ne 's#^URL: ##p'
-}
-parse_svn_repository_root() {
-    svn info 2>/dev/null | sed -ne 's#^Repository Root: ##p'
-}
-
-function prompt
-{
-if test -n "$HTGT_ENV"; then
-
-    if test $HTGT_ENV = 'Live'; then
-    export PS1="
-${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w${RED}[$HTGT_ENV]${BROWN}\$(parse_git_branch)\$(parse_svn_branch)${WHITE}
-$ "
+function lust () {
+    LUSTRE_DIR=/lustre/scratch109/sanger/sp12
+    if test -d "$LUSTRE_DIR"; then
+       cd "$LUSTRE_DIR"
     else
-    export PS1="
-${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w${PURPLE}[$HTGT_ENV]${BROWN}\$(parse_git_branch)\$(parse_svn_branch)${WHITE}
-$ "
+        ssh -t farm2-login "cd \"$LUSTRE_DIR\"; exec tcsh -l"
     fi
-
-else
-export PS1="
-${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w${BROWN}\$(parse_git_branch)\$(parse_svn_branch)${WHITE}
-$ "
-fi
 }
-prompt
