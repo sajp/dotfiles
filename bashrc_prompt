@@ -11,9 +11,6 @@ RED="\[\033[0;31m\]"
 GREY="\[\033[0;37m\]"
 BROWN="\[\033[0;33m\]"
 
-parse_git_branch () {
-    git name-rev HEAD 2> /dev/null | sed 's#HEAD\ \(.*\)# (git::\1)#'
-}
 parse_svn_branch() {
     parse_svn_url | sed -e 's#^'"$(parse_svn_repository_root)"'##g' | awk '{print " (svn::"$1")" }'
 }
@@ -24,25 +21,45 @@ parse_svn_repository_root() {
     svn info 2>/dev/null | sed -ne 's#^Repository Root: ##p'
 }
 
-
-function prompt
-{
-if test -n "$HTGT_ENV"; then
-
-    if test $HTGT_ENV = 'Live'; then
-    export PS1="
-${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w${RED}[$HTGT_ENV]${BROWN}\$(parse_git_branch)\$(parse_svn_branch)${WHITE}
-$ "
+lims2_env(){
+if test -n "$LIMS2_DB"; then
+    if test $LIMS2_DB = 'LIMS2_LIVE'; then
+L4="\e[00;31m[$LIMS2_DB]"
+    elif test $LIMS2_DB = 'LIMS2_TEST'; then
+L4="\e[00;32m[$LIMS2_DB]"
+    elif test $LIMS2_DB = 'LIMS2_STAGING'; then
+L4="\e[00;37m[$LIMS2_DB]"
     else
-    export PS1="
-${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w${PURPLE}[$HTGT_ENV]${BROWN}\$(parse_git_branch)\$(parse_svn_branch)${WHITE}
-$ "
+L4="\e[00;35m[$LIMS2_DB]"
     fi
-
 else
-export PS1="
-${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w${BROWN}\$(parse_git_branch)\$(parse_svn_branch)${WHITE}
-$ "
+L4=""
 fi
+echo -e $L4
+}
+
+function prompt {
+L1="
+"
+L2="${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w "
+
+if test -n "$HTGT_ENV"; then
+    if test $HTGT_ENV = 'Live'; then
+L3="${RED}[$HTGT_ENV]"
+    else
+L3="${PURPLE}[$HTGT_ENV]"
+    fi
+else
+L3=""
+fi
+
+L4="\$(lims2_env)"
+
+L5="${BROWN}\$(__git_ps1)\$(parse_svn_branch)${WHITE}
+$ "
+
+PS1="$L1$L2$L3$L4$L5"
+
+export PS1
 }
 prompt
