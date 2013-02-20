@@ -30,5 +30,8 @@ source "$HOME/.bashrc_common"
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
+#Add firefox 10 to path, needed for imits tests
+PATH=$HOME/applications/firefox/firefox:$PATH
+
 echo rvm_path='~/.rvm' > ~/.rvmrc
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
