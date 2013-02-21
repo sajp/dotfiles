@@ -1,0 +1,10 @@
+# hack to get work bash working
+#
+# setup common config
+source "$HOME/.bashrc_common"
+
+# setup prompt
+source "$HOME/.bashrc_prompt"
+
+# source bash completion
+source ~/.git-completion.bash
