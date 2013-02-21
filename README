@@ -9,7 +9,16 @@ Create symlinks, I will script this eventually:
     ln -s ~/dotfiles/bashrc_htgt ~/.bashrc_htgt
     ln -s ~/dotfiles/bashrc_common ~/.bashrc_common
     ln -s ~/dotfiles/bashrc_prompt ~/.bashrc_prompt
+
     ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
+
     ln -s ~/dotfiles/gitignore ~/.gitignore
     ln -s ~/dotfiles/gitconfig ~/.gitconfig
 
+For Work:
+    ln -s ~/dotfiles/bashrc_htgt ~/.bashrc_htgt
+
+Host Specific:
+    ln -s ~/dotfiles/bashrc_work ~/.bashrc_host
+    or
+    ln -s ~/dotfiles/bashrc_home ~/.bashrc_host
