@@ -1,3 +1,5 @@
+umask 0002
+
 # don't put duplicate lines in the history. See bash(1) for more options
 export HISTCONTROL=ignoreboth
 export HISTSIZE=100000
@@ -38,18 +40,3 @@ svndiff()
 
 # ignore .svn folders in tab complete
 export FIGNORE=.svn
-
-# source bash completion
-source ~/.git-completion.bash
-
-# setup prompt
-source "$HOME/.bashrc_prompt"
-
-function lust () {
-    LUSTRE_DIR=/lustre/scratch109/sanger/sp12
-    if test -d "$LUSTRE_DIR"; then
-       cd "$LUSTRE_DIR"
-    else
-        ssh -t farm2-login "cd \"$LUSTRE_DIR\"; exec tcsh -l"
-    fi
-}
