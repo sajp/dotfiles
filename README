@@ -11,4 +11,5 @@ Create symlinks, I will script this eventually:
     ln -s ~/dotfiles/bashrc_prompt ~/.bashrc_prompt
     ln -s ~/dotfiles/tmux.conf ~/.tmux.conf
     ln -s ~/dotfiles/gitignore ~/.gitignore
+    ln -s ~/dotfiles/gitconfig ~/.gitconfig
 
