@@ -41,7 +41,7 @@ echo -e $L4
 function prompt {
 L1="
 "
-L2="${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w "
+L2="${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w"
 
 if test -n "$HTGT_ENV"; then
     if test $HTGT_ENV = 'Live'; then
@@ -58,7 +58,7 @@ L4="\$(lims2_env)"
 L5="${BROWN}\$(__git_ps1)\$(parse_svn_branch)${WHITE}
 $ "
 
-PS1="$L1$L2$L3$L4$L5"
+PS1="$L1$L2$L5$L3$L4"
 
 export PS1
 }
