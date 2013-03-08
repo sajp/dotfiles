@@ -43,22 +43,22 @@ L1="
 "
 L2="${GREEN}\u${CYAN}@${BLUE}\h ${CYAN}\w"
 
+L3="${BROWN}\$(__git_ps1)\$(parse_svn_branch)${WHITE}"
+
 if test -n "$HTGT_ENV"; then
     if test $HTGT_ENV = 'Live'; then
-L3="${RED}[$HTGT_ENV]"
+L4=" ${RED}[$HTGT_ENV]"
     else
-L3="${PURPLE}[$HTGT_ENV]"
+L4=" ${PURPLE}[$HTGT_ENV]"
     fi
 else
-L3=""
+L4=""
 fi
 
-L4="\$(lims2_env)"
+L5=" \$(lims2_env)"
 
-L5="${BROWN}\$(__git_ps1)\$(parse_svn_branch)${WHITE}
+PS1="$L1$L2$L3$L4$L5${WHITE}
 $ "
-
-PS1="$L1$L2$L5$L3$L4"
 
 export PS1
 }
