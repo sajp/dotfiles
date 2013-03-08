@@ -27,6 +27,7 @@
 	editor = vim
 [alias]
 	d = difftool
+    ds = diff --staged
 	s = status
 	last = log -1 HEAD
 	st = status
