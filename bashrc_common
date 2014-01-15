@@ -27,6 +27,7 @@ alias up="cd .."
 alias tu='top -o cpu' #cpu
 alias tm='top -o vsize' #memory
 alias tmux="tmux -2"
+alias ll="ls -lhA --color --group-directories-first"
 
 # set svn default editor
 export SVN_EDITOR=vim
