@@ -1,0 +1,19 @@
+
+# Default severity (equivalent to --harsh)
+severity = 3
+
+[Subroutines::ProhibitUnusedPrivateSubroutines]
+
+severity = 2
+
+[-ErrorHandling::RequireCarping]
+
+[-RegularExpressions::RequireExtendedFormatting]
+
+[ControlStructures::ProhibitNegativeExpressionsInUnlessAndUntilConditions]
+
+severity = 2
+
+[Miscellanea::RequireRcsKeywords]
+
+keywords = HeadURL LastChangedRevision LastChangedDate LastChangedBy
