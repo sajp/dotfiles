@@ -7,14 +7,40 @@ export no_proxy="$NO_PROXY"
 export PATH="$HOME/tools:$HOME/bin:$PATH"
 export GIT_PROXY_COMMAND=git-proxy-squid
 
+#on farm3 default perl is 5.16
+#if test -r "/software/bin/perl-5.8.9"; then
+#    PERLCMD="/software/bin/perl-5.8.9 -I/software/perl-5.8.9/lib/5.8.9/x86_64-linux-thread-multi"
+#else
+#    PERLCMD="/software/bin/perl"
+#fi
+
 # if in vm source global bashrc
 if test -r "/opt/t87/global/conf/bashrc"; then
-    source "/opt/t87/global/conf/bashrc"
-# htgt env setup
+   source "/opt/t87/global/conf/bashrc"
+   [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+# if in farm3 environment
+elif [ -d /software/team87/pandora ] ; then
+#    export PATH="$HOME/workspace/Design-Creation/bin:$PATH"
+#    export PERL5LIB=$HOME/workspace/Design-Creation/lib:$PERL5LIB
+#
+#    export PERL5LIB=$HOME/mylib/design_creation_farm3/lib/perl5:$PERL5LIB
+#    export PERL5LIB=$HOME/mylib/design_creation_farm3/lib/perl5/x86_64-linux-thread-multi:$PERL5LIB
+#    export PERL5LIB=/software/pubseq/PerlModules/Ensembl/www_73_1/modules:$PERL5LIB
+#    export PERL5LIB=/software/pubseq/PerlModules/Ensembl/www_73_1/ensembl/modules:$PERL5LIB
+#    export PERL5LIB=/software/pubseq/PerlModules/BioPerl/1_6_920:$PERL5LIB
+#    export XA2MULTI_CMD=/software/solexa/pkg/bwa/current/xa2multi.pl
+#
+    echo ''
+#    echo "################################"
+#    echo 'TEMP FARM3 DESIGN CREATION SETUP'
+#    echo "PERL5LIB: $PERL5LIB"
+#    echo "PATH: $PATH"
+#    echo "################################"
+#    echo ''
 elif [ -f /software/team87/brave_new_world/bin/htgt-env.pl ] ; then
-    exec /software/bin/perl -I/software/team87/brave_new_world/lib/perl5 \
-                            -I/software/team87/brave_new_world/lib/perl5/x86_64-linux-thread-multi \
-    /software/team87/brave_new_world/bin/htgt-env.pl
+   exec perl -I/software/team87/brave_new_world/lib/perl5 \
+                           -I/software/team87/brave_new_world/lib/perl5/x86_64-linux-thread-multi \
+        /software/team87/brave_new_world/bin/htgt-env.pl
 fi
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
@@ -26,7 +52,36 @@ function lust () {
     LUSTRE_DIR=/lustre/scratch109/sanger/sp12
     if test -d "$LUSTRE_DIR"; then
        cd "$LUSTRE_DIR"
-    else
-        ssh -t farm2-login "cd \"$LUSTRE_DIR\"; exec tcsh -l"
     fi
+}
+
+function db {
+    if [ -z $1 ]; then
+        echo "Please provide a profile name";
+        return
+    fi
+
+    perl -MYAML::Any=LoadFile -wE 'my @files = grep { /dbconnect\.y/ } values %ENV; die "No dbconnect files found" unless @files; for my $file ( @files ) { my $data = LoadFile( $file ); for my $key ( keys %{ $data } ) { next unless lc($key) eq lc($ARGV[0]); my ($host, $port, $dbname) = $data->{$key}{dsn} =~ /host=(.*);port=(.*);dbname=(.*)/; my $user; if ( exists $data->{$key}{user} ) { $user = $data->{$key}{user}; } else { $user = $data->{$key}{roles}{lims2}{user}; } die "Couldnt find user" unless $user; exec "psql --host $host --port $port --user $user $dbname" or die "Couldnt exec: $!"; }  }' $1
+} 
+
+function revcom () {
+    if [ -z $1 ]; then
+        echo 'You must provide a sequence (or sequences)';
+    fi
+
+    perl -MBio::Perl -we 'print $_ . " -> " . revcom($_)->seq . "\n" for @ARGV;' "$@"
+}
+
+function lims2 () {
+    if [ -z $LIMS2_DB ]; then
+        echo 'You must set LIMS2-environment';
+        return;
+    fi
+
+    CODE=$1
+    shift
+
+    #example usage: 
+    #lims2 'say Dumper( { $m->schema->resultset("Design")->find({ id => 39616 })->get_columns } );'
+    perl -MLIMS2::Model -MData::Dumper -wE 'my $m = LIMS2::Model->new(user => "lims2"); '"$CODE" "$@"
 }

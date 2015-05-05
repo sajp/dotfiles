@@ -28,12 +28,14 @@
 [alias]
 	d = difftool
     ds = diff --staged
-	s = status
 	last = log -1 HEAD
 	st = status
 	co = checkout
 	br = branch
 	ci = commit
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    fl = log -u
 [merge]
 	tool = vimdiff
+[help]
+	autocorrect = 10

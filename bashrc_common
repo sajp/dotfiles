@@ -41,3 +41,11 @@ svndiff()
 
 # ignore .svn folders in tab complete
 export FIGNORE=.svn
+
+# setup ack
+export ACK_PAGER_COLOR="less -x4SRFX"
+# -x4 = 4 character tabs
+# -S = do not fold lines
+# -R = colour
+# -F = quit less if less than one screen
+# -X = disable sending the termcap init and deinit strings to terminal
