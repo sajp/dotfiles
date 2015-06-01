@@ -39,3 +39,5 @@
 	tool = vimdiff
 [help]
 	autocorrect = 10
+[push]
+	default = simple
