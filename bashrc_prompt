@@ -22,23 +22,15 @@ parse_svn_repository_root() {
 }
 
 lims2_env(){
-if test -n "$LIMS2_DB"; then
-    if test $LIMS2_DB = 'LIMS2_LIVE'; then
-L4="\e[00;31m[$LIMS2_DB]"
-    elif test $LIMS2_DB = 'LIMS2_TEST'; then
-L4="\e[00;32m[$LIMS2_DB]"
-    elif test $LIMS2_DB = 'LIMS2_STAGING'; then
-L4="\e[00;37m[$LIMS2_DB]"
+if test -n "$DANCER_ENVIRONMENT"; then
+    if test $DANCER_ENVIRONMENT = 'production'; then
+L4="\e[00;31m[$DANCER_ENVIRONMENT]"
+    elif test $DANCER_ENVIRONMENT = 'beta'; then
+L4="\e[00;32m[$DANCER_ENVIRONMENT]"
+    elif test $DANCER_ENVIRONMENT = 'development'; then
+L4="\e[00;37m[$DANCER_ENVIRONMENT]"
     else
-L4="\e[00;35m[$LIMS2_DB]"
-    fi
-elif test -n "$WGE_DB"; then
-    if test $WGE_DB = 'WGE'; then
-L4="\e[00;31m[$WGE_DB]"
-    elif test $WGE_DB = 'WGE_TEST'; then
-L4="\e[00;32m[$WGE_DB]"
-    else
-L4="\e[00;35m[$WGE_DB]"
+L4="\e[00;35m[$DANCER_ENVIRONMENT]"
     fi
 else
 L4=""
