@@ -1,9 +1,12 @@
 umask 0002
 
 # don't put duplicate lines in the history. See bash(1) for more options
-export HISTCONTROL=ignoreboth
+export HISTCONTROL=ignoredups:erasedups
 export HISTSIZE=100000
 export HISTFILESIZE=100000000
+
+# Save and reload the history after each command finishes
+export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
 
 # append to the history file, don't overwrite it
 shopt -s histappend
