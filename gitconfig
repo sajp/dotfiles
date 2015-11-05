@@ -18,6 +18,8 @@
     added = yellow
     changed = green
     untracked = cyan
+    branch = magenta
+    unmerged = red
 [diff]
 	tool = vimdiff
 [difftool]
@@ -40,4 +42,4 @@
 [help]
 	autocorrect = 10
 [push]
-	default = simple
+	default = current

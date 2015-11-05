@@ -18,6 +18,7 @@ source "$HOME/.bashrc_prompt"
 
 # source bash completion
 source ~/.git-completion.bash
+source ~/dotfiles/git-flow-completion.bash
 
 echo rvm_path='~/.rvm' > ~/.rvmrc
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*

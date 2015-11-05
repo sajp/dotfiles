@@ -1,0 +1,5 @@
+## perltidy.rc --- configuration for perltidy
+-pbp -l=120 -nst
+
+# -l=120 : max line length 120
+# -nst : no standard output

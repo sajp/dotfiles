@@ -10,6 +10,7 @@ PURPLE="\[\033[0;35m\]"
 RED="\[\033[0;31m\]"
 GREY="\[\033[0;37m\]"
 BROWN="\[\033[0;33m\]"
+NORMAL="\[\033[0;0m\]"
 
 parse_svn_branch() {
     parse_svn_url | sed -e 's#^'"$(parse_svn_repository_root)"'##g' | awk '{print " (svn::"$1")" }'
@@ -57,7 +58,7 @@ fi
 
 L5=" \$(lims2_env)"
 
-PS1="$L1$L2$L3$L4$L5${WHITE}
+PS1="$L1$L2$L3$L4$L5${NORMAL}
 $ "
 
 export PS1
