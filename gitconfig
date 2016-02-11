@@ -39,7 +39,6 @@
     fl = log -u
 [merge]
 	tool = vimdiff
-	ff = false
 [help]
 	autocorrect = 10
 [push]
