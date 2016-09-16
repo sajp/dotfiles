@@ -1,10 +1,10 @@
 [user]
-	name = Sajith Perera\n
+	name = Sajith Perera
 	email = sajith.perera@congenica.com
 [github]
-	user = sajp
+    user = sajp
 [color]
-	ui = auto
+    ui = auto
   [color "branch"]
     current = yellow reverse
     local = yellow
@@ -18,6 +18,8 @@
     added = yellow
     changed = green
     untracked = cyan
+    branch = magenta
+    unmerged = red
 [diff]
 	tool = vimdiff
 [difftool]
@@ -26,18 +28,18 @@
 	excludesfile = ~/.gitignore
 	editor = vim
 [alias]
-	d = difftool
+    d = difftool
     ds = diff --staged
-	last = log -1 HEAD
-	st = status
-	co = checkout
-	br = branch
-	ci = commit
-	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+    last = log -1 HEAD
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
     fl = log -u
 [merge]
 	tool = vimdiff
 [help]
 	autocorrect = 10
 [push]
-	default = simple
+	default = current
