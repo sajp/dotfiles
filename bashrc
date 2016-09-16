@@ -21,3 +21,6 @@ source ~/.git-completion.bash
 
 echo rvm_path='~/.rvm' > ~/.rvmrc
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+#THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
+[[ -s "/home/saj/.gvm/bin/gvm-init.sh" ]] && source "/home/saj/.gvm/bin/gvm-init.sh"

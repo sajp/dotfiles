@@ -1,68 +1,34 @@
-export HTTP_PROXY="http://wwwcache.sanger.ac.uk:3128"
-export HTTPS_PROXY="http://wwwcache.sanger.ac.uk:3128"
-export NO_PROXY="localhost, 127.0.0.1, .sanger.ac.uk, www.ensembl.org"
-export http_proxy="$HTTP_PROXY"
-export https_proxy="$HTTPS_PROXY"
-export no_proxy="$NO_PROXY"
-export PATH="$HOME/tools:$HOME/bin:$PATH"
-export GIT_PROXY_COMMAND=git-proxy-squid
 
-#on farm3 default perl is 5.16
-#if test -r "/software/bin/perl-5.8.9"; then
-#    PERLCMD="/software/bin/perl-5.8.9 -I/software/perl-5.8.9/lib/5.8.9/x86_64-linux-thread-multi"
-#else
-#    PERLCMD="/software/bin/perl"
-#fi
+function congenica_env () {
+    export PERL5LIB=/software/congenica/packages/Perl5/lib/lib/perl5:/software/congenica/packages/Perl5/lib/lib/perl5/x86_64-linux-gnu-thread-multi
+    export PATH=/software/congenica/packages/bpipe-0.9.8.7/bin:~/workspace/processing-utils/sapientia-task/bin:$PATH
+    export MAX_JAVA_MEM=1024m
 
-# if in vm source global bashrc
-if test -r "/opt/t87/global/conf/bashrc"; then
-   source "/opt/t87/global/conf/bashrc"
-   [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-# if in farm3 environment
-elif [ -d /software/team87/pandora ] ; then
-#    export PATH="$HOME/workspace/Design-Creation/bin:$PATH"
-#    export PERL5LIB=$HOME/workspace/Design-Creation/lib:$PERL5LIB
-#
-#    export PERL5LIB=$HOME/mylib/design_creation_farm3/lib/perl5:$PERL5LIB
-#    export PERL5LIB=$HOME/mylib/design_creation_farm3/lib/perl5/x86_64-linux-thread-multi:$PERL5LIB
-#    export PERL5LIB=/software/pubseq/PerlModules/Ensembl/www_73_1/modules:$PERL5LIB
-#    export PERL5LIB=/software/pubseq/PerlModules/Ensembl/www_73_1/ensembl/modules:$PERL5LIB
-#    export PERL5LIB=/software/pubseq/PerlModules/BioPerl/1_6_920:$PERL5LIB
-#    export XA2MULTI_CMD=/software/solexa/pkg/bwa/current/xa2multi.pl
-#
-    echo ''
-#    echo "################################"
-#    echo 'TEMP FARM3 DESIGN CREATION SETUP'
-#    echo "PERL5LIB: $PERL5LIB"
-#    echo "PATH: $PATH"
-#    echo "################################"
-#    echo ''
-elif [ -f /software/team87/brave_new_world/bin/htgt-env.pl ] ; then
-   exec perl -I/software/team87/brave_new_world/lib/perl5 \
-                           -I/software/team87/brave_new_world/lib/perl5/x86_64-linux-thread-multi \
-        /software/team87/brave_new_world/bin/htgt-env.pl
-fi
-
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-
-#Add firefox 10 to path, needed for imits tests
-PATH=$HOME/applications/firefox/firefox:$PATH
-
-function lust () {
-    LUSTRE_DIR=/lustre/scratch109/sanger/sp12
-    if test -d "$LUSTRE_DIR"; then
-       cd "$LUSTRE_DIR"
-    fi
+    dancer_env "$1"
 }
 
-function db {
-    if [ -z $1 ]; then
-        echo "Please provide a profile name";
+function dancer_env () {
+    export DANCER_ENVIRONMENT=${1:-development}
+    export DANCER_APPDIR=/software/congenica/packages/sapientia-web/
+
+    if [ ! -f "${DANCER_APPDIR}environments/${DANCER_ENVIRONMENT}.yml" ]; then
+        echo "Error: Dancer environment ${DANCER_APPDIR}environments/${DANCER_ENVIRONMENT}.yml doesn't exist"
+        unset DANCER_APPDIR
+        unset DANCER_ENVIRONMENT
         return
     fi
 
-    perl -MYAML::Any=LoadFile -wE 'my @files = grep { /dbconnect\.y/ } values %ENV; die "No dbconnect files found" unless @files; for my $file ( @files ) { my $data = LoadFile( $file ); for my $key ( keys %{ $data } ) { next unless lc($key) eq lc($ARGV[0]); my ($host, $port, $dbname) = $data->{$key}{dsn} =~ /host=(.*);port=(.*);dbname=(.*)/; my $user; if ( exists $data->{$key}{user} ) { $user = $data->{$key}{user}; } else { $user = $data->{$key}{roles}{lims2}{user}; } die "Couldnt find user" unless $user; exec "psql --host $host --port $port --user $user $dbname" or die "Couldnt exec: $!"; }  }' $1
-} 
+    echo "DANCER_APPDIR: $DANCER_APPDIR"
+    echo "DANCER_ENVIRONMENT: $DANCER_ENVIRONMENT"
+}
+
+dancer_db_ver ()
+{
+    if [ -z $DANCER_ENVIRONMENT ]; then
+        return;
+    fi;
+    echo ' ['$DANCER_ENVIRONMENT']'
+}
 
 function revcom () {
     if [ -z $1 ]; then
@@ -70,18 +36,4 @@ function revcom () {
     fi
 
     perl -MBio::Perl -we 'print $_ . " -> " . revcom($_)->seq . "\n" for @ARGV;' "$@"
-}
-
-function lims2 () {
-    if [ -z $LIMS2_DB ]; then
-        echo 'You must set LIMS2-environment';
-        return;
-    fi
-
-    CODE=$1
-    shift
-
-    #example usage: 
-    #lims2 'say Dumper( { $m->schema->resultset("Design")->find({ id => 39616 })->get_columns } );'
-    perl -MLIMS2::Model -MData::Dumper -wE 'my $m = LIMS2::Model->new(user => "lims2"); '"$CODE" "$@"
 }
