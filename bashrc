@@ -18,6 +18,7 @@ source "$HOME/.bashrc_prompt"
 
 # source bash completion
 source ~/.git-completion.bash
+source ~/dotfiles/git-prompt.sh
 source ~/dotfiles/git-flow-completion.bash
 
 echo rvm_path='~/.rvm' > ~/.rvmrc
