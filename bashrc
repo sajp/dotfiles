@@ -26,3 +26,6 @@ echo rvm_path='~/.rvm' > ~/.rvmrc
 
 #THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
 [[ -s "/home/saj/.gvm/bin/gvm-init.sh" ]] && source "/home/saj/.gvm/bin/gvm-init.sh"
+
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

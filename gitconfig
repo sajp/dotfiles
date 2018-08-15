@@ -39,7 +39,14 @@
     fl = log -u
 [merge]
 	tool = vimdiff
+	conflictstyle = diff3
 [help]
 	autocorrect = 10
 [push]
 	default = current
+[rerere]
+	enabled = 1
+[rebase]
+	autosquash = true
+[fetch]
+	prune = true
