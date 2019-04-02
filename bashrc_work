@@ -1,39 +1,30 @@
 
-function congenica_env () {
-    export PERL5LIB=/software/congenica/packages/Perl5/lib/lib/perl5:/software/congenica/packages/Perl5/lib/lib/perl5/x86_64-linux-gnu-thread-multi
-    export PATH=/software/congenica/packages/bpipe-0.9.8.7/bin:~/workspace/processing-utils/sapientia-task/bin:$PATH
-    export MAX_JAVA_MEM=1024m
-
-    dancer_env "$1"
-}
-
-function dancer_env () {
-    export DANCER_ENVIRONMENT=${1:-development}
-    export DANCER_APPDIR=/software/congenica/packages/sapientia-web/
-
-    if [ ! -f "${DANCER_APPDIR}environments/${DANCER_ENVIRONMENT}.yml" ]; then
-        echo "Error: Dancer environment ${DANCER_APPDIR}environments/${DANCER_ENVIRONMENT}.yml doesn't exist"
-        unset DANCER_APPDIR
-        unset DANCER_ENVIRONMENT
-        return
-    fi
-
-    echo "DANCER_APPDIR: $DANCER_APPDIR"
-    echo "DANCER_ENVIRONMENT: $DANCER_ENVIRONMENT"
-}
-
-dancer_db_ver ()
-{
-    if [ -z $DANCER_ENVIRONMENT ]; then
-        return;
-    fi;
-    echo ' ['$DANCER_ENVIRONMENT']'
-}
-
 function revcom () {
     if [ -z $1 ]; then
         echo 'You must provide a sequence (or sequences)';
     fi
 
     perl -MBio::Perl -we 'print $_ . " -> " . revcom($_)->seq . "\n" for @ARGV;' "$@"
+}
+
+function dedup () {
+   if [ -z $1 ]; then
+       echo 'usage: dedup <ENV_VAR>'
+       return
+   fi
+
+   perl -wE 'my %v; print join ":", grep { ! $v{$_}++ } split /:/, $ENV{ $ARGV[0] };' $1
+}
+
+function dedup_path () { export PATH=$(dedup PATH); }
+function dedup_perl5 () { export PERL5LIB=$(dedup PERL5LIB); }
+
+function perlmodver () {
+    test -n "$1" || { echo 'Usage: perlmodver MODULE' >&2; return; }
+    perl -m"$1" -le 'print $ARGV[0]->VERSION' "$1"
+}
+
+function perlmodpath () {
+    test -n "$1" || { echo 'Usage: perlmodpath MODULE' >&2; return; }
+    perl -m"$1" -le '$ARGV[0]=~s/::/\//g; print $INC{"$ARGV[0].pm"}' "$1"
 }

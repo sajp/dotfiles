@@ -6,7 +6,6 @@ Installation:
 Create symlinks, I will script this eventually:
 
     ln -s ~/dotfiles/bashrc ~/.bashrc
-    ln -s ~/dotfiles/bashrc_htgt ~/.bashrc_htgt
     ln -s ~/dotfiles/bashrc_common ~/.bashrc_common
     ln -s ~/dotfiles/bashrc_prompt ~/.bashrc_prompt
 
@@ -16,10 +15,11 @@ Create symlinks, I will script this eventually:
     ln -s ~/dotfiles/gitconfig ~/.gitconfig
     ln -s ~/dotfiles/git-completion.bash ~/.git-completion.bash
 
-For Work:
-    ln -s ~/dotfiles/bashrc_htgt ~/.bashrc_htgt
+Host Specific, make following file:
+    ~/.bashrc_host
 
-Host Specific:
-    ln -s ~/dotfiles/bashrc_work ~/.bashrc_host
-    or
-    ln -s ~/dotfiles/bashrc_home ~/.bashrc_host
+Added unique config, can also source specific configs:
+    # setup specific bashrc if it exists
+    if test -r "$HOME/dotfiles/bashrc_fzf"; then
+        source "$HOME/dotfiles/bashrc_fzf"
+    fi

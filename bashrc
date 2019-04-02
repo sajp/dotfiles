@@ -20,12 +20,3 @@ source "$HOME/.bashrc_prompt"
 source ~/.git-completion.bash
 source ~/dotfiles/git-prompt.sh
 source ~/dotfiles/git-flow-completion.bash
-
-echo rvm_path='~/.rvm' > ~/.rvmrc
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
-#THIS MUST BE AT THE END OF THE FILE FOR GVM TO WORK!!!
-[[ -s "/home/saj/.gvm/bin/gvm-init.sh" ]] && source "/home/saj/.gvm/bin/gvm-init.sh"
-
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
