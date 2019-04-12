@@ -34,3 +34,11 @@ fshow() {
                 {}
 FZF-EOF"
 }
+
+alias git-ls-untracked='git ls-files --others --exclude-standard'
+alias git-ls-changed='git diff --name-only'
+alias git-ls-staged='git diff --name-only --staged'
+
+alias git-add='git-ls-changed | fzf -m --print0 | xargs -0 -o -t git add'
+alias git-diff='git diff "$(git-ls-changed | fzf --prompt=git-diff-file:)"'
+alias git-diff-staged='git diff --staged "$(git-ls-staged | fzf --prompt=git-diff-staged-file:)"'
