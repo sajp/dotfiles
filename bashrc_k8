@@ -3,11 +3,21 @@ alias krc='kubectl config current-context'
 # List all contexts
 alias klc='kubectl config get-contexts -o name | sed "s/^/  /;\|^  $(krc)$|s/ /*/"'
 # Change current context
-alias kcc='kubectl config use-context "$(klc | fzf -e | sed "s/^..//")"'
+alias kcc='kubectl config use-context "$(klc | fzf --prompt=context | sed "s/^..//")"'
 
 # Get current namespace
 alias krn='kubectl config get-contexts --no-headers "$(krc)" | awk "{print \$5}" | sed "s/^$/default/"'
 # List all namespaces
 alias kln='kubectl get -o name ns | sed "s|^.*/|  |;\|$(krn)|s/ /*/"'
 # Change current namespace
-alias kcn='kubectl config set-context --current --namespace "$(kln | fzf -e | sed "s/^..//")"'
+alias kcn='kubectl config set-context "$(krc)" --namespace "$(kln | fzf --prompt=namespace | sed "s/^..//")"'
+
+# pods
+alias kgp='kubectl get pods -o wide'
+alias kgpn='kubectl get pods --no-headers --field-selector=status.phase=Running --output=custom-columns=NAME:.metadata.name'
+# exec into pod
+alias kep='kubectl exec -ti "$(kgpn | fzf --prompt=exec-pod)" bash'
+# psql exec
+#alias kepdb='kubectl exec -ti "$(kgpn | fzf -e)" -- bash -c "export PGPASSWORD=$SAPIENTIA_DB_PASSWORD && psql -h $SAPIENTIA_DB_HOST -U $SAPIENTIA_DB_USER -p $SAPIENTIA_DB_PORT -d $SAPIENTIA_DB_NAME"'
+# delete pod
+alias kdp='kubectl delete pod "$(kgpn | fzf --prompt=delete-pod:)"'
