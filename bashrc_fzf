@@ -6,7 +6,7 @@ export FZF_DEFAULT_COMMAND='
    find . -path "*/\.*" -prune -o -type f -print -o -type l -print |
       sed s/^..//) 2> /dev/null'
 
-# fbr - checkout git branch (including remote branches), sorted by most recent commit, limit 30 last branches
+# git-branch - checkout git branch (including remote branches), sorted by most recent commit, limit 30 last branches
 git-branch() {
   local branches branch
   branches=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format="%(refname:short)") &&
@@ -15,8 +15,8 @@ git-branch() {
   git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
 }
 
-# fshow - git commit browser
-fshow() {
+# git-show - git commit browser
+git-show() {
   git log --graph --color=always \
       --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
   fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
