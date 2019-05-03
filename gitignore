@@ -4,3 +4,4 @@ tmp/
 docker-compose/saj-dev/
 docker-compose/saj-web/
 docker-compose/saj-queue/
+.projections.json
