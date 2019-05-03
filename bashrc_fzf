@@ -1,8 +1,9 @@
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 #fzf
+#export FZF_DEFAULT_COMMAND='rg --files'
 export FZF_DEFAULT_COMMAND='
-  (git ls-tree -r --name-only HEAD ||
+  (git ls-tree -r --name-only HEAD || rg --files ||
    find . -path "*/\.*" -prune -o -type f -print -o -type l -print |
       sed s/^..//) 2> /dev/null'
 
@@ -16,7 +17,7 @@ git-branch() {
 }
 
 # git-show - git commit browser
-git-show() {
+git-logs() {
   git log --graph --color=always \
       --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
   fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
@@ -26,6 +27,16 @@ git-show() {
                 {}
 FZF-EOF"
 }
+
+# git-irebase-branch - interactive rebase current branch into another branch
+git-irebase-branch() {
+  local branches branch
+  branches=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format="%(refname:short)") &&
+  branch=$(echo "$branches" |
+           fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
+  git rebase -i $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
+}
+
 
 alias git-ls-untracked='git ls-files --others --exclude-standard'
 alias git-ls-changed='git diff --name-only'
