@@ -7,27 +7,6 @@ export FZF_DEFAULT_COMMAND='
    find . -path "*/\.*" -prune -o -type f -print -o -type l -print |
       sed s/^..//) 2> /dev/null'
 
-# git-branch - checkout git branch (including remote branches), sorted by most recent commit, limit 30 last branches
-git-branch() {
-  local branches branch
-  branches=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format="%(refname:short)") &&
-  branch=$(echo "$branches" |
-           fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
-  git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
-}
-
-# git-show - git commit browser
-git-logs() {
-  git log --graph --color=always \
-      --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
-  fzf --ansi --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
-      --bind "ctrl-m:execute:
-                (grep -o '[a-f0-9]\{7\}' | head -1 |
-                xargs -I % sh -c 'git show --color=always % | less -R') << 'FZF-EOF'
-                {}
-FZF-EOF"
-}
-
 # git-irebase-branch - interactive rebase current branch into another branch
 git-irebase-branch() {
   local branches branch
@@ -37,11 +16,47 @@ git-irebase-branch() {
   git rebase -i $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
 }
 
+# git-branch - checkout git branch (including remote branches), sorted by most recent commit, limit 30 last branches
+git-branch() {
+  local branches branch
+  branches=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format="%(refname:short)") &&
+  branch=$(echo "$branches" |
+           fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
+  git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
+}
 
 alias git-ls-untracked='git ls-files --others --exclude-standard'
 alias git-ls-changed='git diff --name-only'
 alias git-ls-staged='git diff --name-only --staged'
 
+# git-add : support multiple file selection
 alias git-add='git-ls-changed | fzf -m --print0 | xargs -0 -o -t git add'
 alias git-diff='git diff "$(git-ls-changed | fzf --prompt=git-diff-file:)"'
 alias git-diff-staged='git diff --staged "$(git-ls-staged | fzf --prompt=git-diff-staged-file:)"'
+
+is_in_git_repo() {
+  git rev-parse HEAD > /dev/null 2>&1
+}
+
+fzf-down() {
+  fzf --height 50% "$@" --border
+}
+
+# git status
+git-status() {
+  is_in_git_repo || return
+  git -c color.status=always status --short |
+  fzf-down -m --ansi --nth 2..,.. \
+    --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1}) | head -500' |
+  cut -c4- | sed 's/.* -> //'
+}
+
+# git log
+git-logs() {
+  is_in_git_repo || return
+  git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always |
+  fzf-down --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
+    --header 'Press CTRL-S to toggle sort' \
+    --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --color=always | head -'$LINES |
+  grep -o "[a-f0-9]\{7,\}"
+}
