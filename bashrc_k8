@@ -1,4 +1,4 @@
-# Get current context
+#Get current context
 alias krc='kubectl config current-context'
 # List all contexts
 alias klc='kubectl config get-contexts -o name | sed "s/^/  /;\|^  $(krc)$|s/ /*/"'
@@ -14,10 +14,29 @@ alias kcn='kubectl config set-context "$(krc)" --namespace "$(kln | fzf --prompt
 
 # pods
 alias kgp='kubectl get pods -o wide'
+# list running pods
 alias kgpn='kubectl get pods --no-headers --field-selector=status.phase=Running --output=custom-columns=NAME:.metadata.name'
+# list all pods
+alias kgpa='kubectl get pods --no-headers --output=custom-columns=NAME:.metadata.name'
 # exec into pod
 alias kep='kubectl exec -ti "$(kgpn | fzf --prompt=exec-pod)" bash'
 # psql exec
 #alias kepdb='kubectl exec -ti "$(kgpn | fzf -e)" -- bash -c "export PGPASSWORD=$SAPIENTIA_DB_PASSWORD && psql -h $SAPIENTIA_DB_HOST -U $SAPIENTIA_DB_USER -p $SAPIENTIA_DB_PORT -d $SAPIENTIA_DB_NAME"'
 # delete pod
-alias kdp='kubectl delete pod "$(kgpn | fzf --prompt=delete-pod:)"'
+alias kdelp='kubectl delete pod "$(kgpn | fzf --prompt=delete-pod:)"'
+# describe pod
+alias kdp='kubectl describe pod "$(kgpa | fzf --prompt=describe-pod:)"'
+
+# LOGS
+alias klp='kubectl logs "$(kgpn | fzf --prompt=describe-pod:)"'
+
+# CONFIGMAPS
+# list config maps
+alias klcm='kubectl get configmap --no-headers --output=custom-columns=NAME:.metadata.name'
+# display configmap - yaml
+alias kgcm='kubectl get -o yaml configmap "$(klcm | fzf --prompt=get-config-map:)"'
+# edit config map
+alias kecm='kubectl edit configmap "$(klcm | fzf --prompt=get-config-map:)"'
+
+# TODO
+#kubectl exec [job-runner-pod-name] -- /bin/bash -c "cat /var/log/job-runner/*/*.log" | jq -s '.[] | select(.sapientia_job_id == "[sapientia-job-id]")' | jq -s 'sort_by(.timestamp)'
