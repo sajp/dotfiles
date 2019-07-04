@@ -20,8 +20,6 @@ alias kgpn='kubectl get pods --no-headers --field-selector=status.phase=Running 
 alias kgpa='kubectl get pods --no-headers --output=custom-columns=NAME:.metadata.name'
 # exec into pod
 alias kep='kubectl exec -ti "$(kgpn | fzf --prompt=exec-pod)" bash'
-# psql exec
-#alias kepdb='kubectl exec -ti "$(kgpn | fzf -e)" -- bash -c "export PGPASSWORD=$SAPIENTIA_DB_PASSWORD && psql -h $SAPIENTIA_DB_HOST -U $SAPIENTIA_DB_USER -p $SAPIENTIA_DB_PORT -d $SAPIENTIA_DB_NAME"'
 # delete pod
 alias kdelp='kubectl delete pod "$(kgpn | fzf --prompt=delete-pod:)"'
 # describe pod
@@ -38,5 +36,5 @@ alias kgcm='kubectl get -o yaml configmap "$(klcm | fzf --prompt=get-config-map:
 # edit config map
 alias kecm='kubectl edit configmap "$(klcm | fzf --prompt=get-config-map:)"'
 
-# TODO
-#kubectl exec [job-runner-pod-name] -- /bin/bash -c "cat /var/log/job-runner/*/*.log" | jq -s '.[] | select(.sapientia_job_id == "[sapientia-job-id]")' | jq -s 'sort_by(.timestamp)'
+# JOBS
+alias kgj='kubectl get jobs -L pipelineName -L sapientiaJobId -L interpretationRequestId -L projectId -L timestamp -L submitterName'
