@@ -31,7 +31,7 @@
     d = difftool
     ds = diff --staged
     last = log -1 HEAD
-    st = status
+    s = status
     co = checkout
     br = branch
     ci = commit
@@ -54,11 +54,10 @@
     # Delete any branches that have been merged into master
     # See also: https://gist.github.com/robmiller/5133264
     delete-merged-branches = "!git co dev && git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
-    # interactive rebase of branch
-    irebase-branch = "!git rebase -i `git merge-base $(git branch-name) dev`"
 [merge]
 	tool = vimdiff
 	conflictstyle = diff3
+	prompt = false
 [help]
 	autocorrect = 10
 [push]

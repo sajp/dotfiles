@@ -1,0 +1,97 @@
+# git-irebase-branch - interactive rebase current branch into another branch
+git-irebase-branch() {
+  branches=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format="%(refname:short)") &&
+  branch=$(echo "$branches" |
+           fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
+  git rebase -i $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
+}
+
+# git-branch - checkout git branch (including remote branches), sorted by most recent commit, limit 30 last branches
+git-branch() {
+  local branches branch
+  branches=$(git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format="%(refname:short)") &&
+  branch=$(echo "$branches" |
+           fzf-tmux -d $(( 2 + $(wc -l <<< "$branches") )) +m) &&
+  git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
+}
+
+alias git-ls-untracked='git ls-files --others --exclude-standard'
+alias git-ls-changed='git diff --name-only'
+alias git-ls-staged='git diff --name-only --staged'
+
+# git-add : support multiple file selection
+alias git-add='git-ls-changed | fzf -m --print0 | xargs -0 -o -t git add'
+alias git-diff='git diff "$(git-ls-changed | fzf --prompt=git-diff-file:)"'
+alias git-diff-staged='git diff --staged "$(git-ls-staged | fzf --prompt=git-diff-staged-file:)"'
+
+is_in_git_repo() {
+  git rev-parse HEAD > /dev/null 2>&1
+}
+
+fzf-down() {
+  fzf --height 50% "$@" --border
+}
+
+# git status
+git-status() {
+  is_in_git_repo || return
+  git -c color.status=always status --short |
+  fzf-down -m --ansi --nth 2..,.. \
+    --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1}) | head -500' |
+  cut -c4- | sed 's/.* -> //'
+}
+
+# git log
+git-logs() {
+  is_in_git_repo || return
+  git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always |
+  fzf-down --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
+    --header 'Press CTRL-S to toggle sort' \
+    --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --color=always | head -'$LINES |
+  grep -o "[a-f0-9]\{7,\}"
+}
+
+#
+# @work specific, assumes epic branch naming convention
+# epic/SAP-1231/task/.... branching off epic/SAP-1231-blah
+#
+
+# find the base epic branch
+git-epic-branch() {
+    local epic_base=$(git branch-name | egrep -o 'epic/SAP-[0-9]+')
+    test -n "$epic_base" || return
+    git for-each-ref --count=1 --sort=-committerdate --format="%(refname:short)" refs/heads/${epic_base}*
+}
+
+# checkout the epic base branch
+git-co-base-epic-branch() {
+    local epic_branch=$(git-epic-branch)
+    test -n "$epic_branch" || { echo 'Can not determine epic base branch' >&2; return; }
+    git checkout $epic_branch
+}
+
+# diff between current branch and base epic branch
+git-diff-epic-branch() {
+    local epic_branch=$(git-epic-branch)
+    test -n "$epic_branch" || { echo 'Can not determine epic base branch' >&2; return; }
+    git diff $epic_branch
+}
+
+# git-irebase-branch - interactive rebase current branch into another branch
+git-irebase-epic-branch() {
+    local epic_branch=$(git-epic-branch)
+    test -n "$epic_branch" || { echo 'Can not determine epic base branch' >&2; return; }
+    git rebase -i $epic_branch
+}
+
+# Create a PR for work off an epic branch, opens editor so edit title and / or add description
+# once done opens a link in web browser to PR
+git-create-pr() {
+    local epic_branch=$(git-epic-branch)
+    test -n "$epic_branch" || { echo 'Can not determine epic base branch' >&2; return; }
+    echo $(git branch-name) | sed "s/.*\///" | sed "s/_/ /g" > pr_file
+    echo "" >> pr_file
+    test -n "$1" && echo $1 >> pr_file
+    hub pull-request --file pr_file --draft --edit --browse --base $epic_branch
+    rm pr_file
+}
