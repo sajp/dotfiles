@@ -15,14 +15,15 @@ git-branch() {
   git checkout $(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")
 }
 
-alias git-ls-untracked='git ls-files --others --exclude-standard'
-alias git-ls-changed='git diff --name-only'
-alias git-ls-staged='git diff --name-only --staged'
+alias git-ls-untracked='git ls-files --others --exclude-standard --relative'
+alias git-ls-changed='git diff --name-only --relative'
+alias git-ls-staged='git diff --name-only --staged --relative'
 
 # git-add : support multiple file selection
 alias git-add='git-ls-changed | fzf -m --print0 | xargs -0 -o -t git add'
 alias git-diff='git diff "$(git-ls-changed | fzf --prompt=git-diff-file:)"'
 alias git-diff-staged='git diff --staged "$(git-ls-staged | fzf --prompt=git-diff-staged-file:)"'
+
 
 is_in_git_repo() {
   git rev-parse HEAD > /dev/null 2>&1
@@ -92,6 +93,6 @@ git-create-pr() {
     echo $(git branch-name) | sed "s/.*\///" | sed "s/_/ /g" > pr_file
     echo "" >> pr_file
     test -n "$1" && echo $1 >> pr_file
-    hub pull-request --file pr_file --draft --edit --browse --base $epic_branch
+    hub pull-request --draft --file pr_file --edit --browse --base $epic_branch
     rm pr_file
 }
