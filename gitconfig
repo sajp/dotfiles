@@ -31,9 +31,10 @@
     d = difftool
     ds = diff --staged
     last = log -1 HEAD
-    s = status
+    s = status -s -b
     co = checkout
     br = branch
+    amend = !git add -u && git commit --amend --no-edit
     ci = commit
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
     fl = log -u

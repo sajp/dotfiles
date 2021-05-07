@@ -18,8 +18,12 @@ alias kgp='kubectl get pods -o wide'
 alias kgpn='kubectl get pods --no-headers --field-selector=status.phase=Running --output=custom-columns=NAME:.metadata.name'
 # list all pods
 alias kgpa='kubectl get pods --no-headers --output=custom-columns=NAME:.metadata.name'
+# list all deployments
+alias kgpd='kubectl get deployment --no-headers --output=custom-columns=NAME:.metadata.name'
 # exec into pod
 alias kep='kubectl exec -ti "$(kgpn | fzf --prompt=exec-pod)" bash'
+# edit deployment
+alias ked='kubectl edit deployment "$(kgpd | fzf --prompt=exec-pod)"'
 # delete pod
 alias kdelp='kubectl delete pod "$(kgpn | fzf --prompt=delete-pod:)"'
 # describe pod

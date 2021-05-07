@@ -20,3 +20,7 @@ source "$HOME/.bashrc_prompt"
 source ~/.git-completion.bash
 source ~/dotfiles/git-prompt.sh
 source ~/dotfiles/git-flow-completion.bash
+source ~/Applications/z/z.sh
+
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

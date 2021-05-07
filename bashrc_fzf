@@ -17,3 +17,19 @@ docker-run() {
     image=$(echo "$docker_images" | fzf --prompt=docker-run-image)
     docker run --rm -ti --entrypoint /bin/bash "$@" $image 
 }
+
+# work - uses z and fzf to cd to commonly used directories
+#        if search term provided filters on that term
+work() {
+  local dir
+  dir=$(z -el $1 | sed "s/^[0-9]*[ \t]*//" | sed '/^common:/d' | fzf -1) &&
+  cd "$dir"
+}
+
+# fd - cd to selected directory
+fd() {
+  local dir
+  dir=$(find ${1:-.} -path '*/\.*' -prune \
+                  -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
+}

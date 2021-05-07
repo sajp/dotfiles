@@ -5,3 +5,10 @@ docker-compose/saj-dev/
 docker-compose/saj-web/
 docker-compose/saj-queue/
 .projections.json
+public/react
+.pylintrc
+backend-common/pytest.ini
+.python-version
+.mypy_cache
+__pycache__
+.vscode
