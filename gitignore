@@ -12,3 +12,4 @@ backend-common/pytest.ini
 .mypy_cache
 __pycache__
 .vscode
+pytest.ini
