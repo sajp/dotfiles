@@ -13,3 +13,4 @@ backend-common/pytest.ini
 __pycache__
 .vscode
 pytest.ini
+*.ipynb
